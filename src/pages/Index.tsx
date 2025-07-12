@@ -1,14 +1,15 @@
-
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { ServiceCard } from "@/components/ServiceCard";
 import { BookingForm } from "@/components/BookingForm";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { HomePage } from "@/components/HomePage";
+import { ServiceDetailPage } from "@/components/ServiceDetailPage";
 import { Car, MapPin, Clock, Users, Calendar, CreditCard } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
+  const [selectedService, setSelectedService] = useState<string | null>(null);
 
   const services = [
     {
@@ -63,12 +64,31 @@ const Index = () => {
 
   const suggestions = services.slice(0, 4);
 
+  const handleServiceClick = (serviceId: string) => {
+    setSelectedService(serviceId);
+  };
+
+  const handleBackToHome = () => {
+    setSelectedService(null);
+  };
+
+  if (selectedService) {
+    return (
+      <ServiceDetailPage 
+        serviceId={selectedService} 
+        onBack={handleBackToHome}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       
       <main className="pb-20 px-4 pt-6">
-        {activeTab === "home" && <HomePage />}
+        {activeTab === "home" && (
+          <HomePage onServiceClick={handleServiceClick} />
+        )}
 
         {activeTab === "services" && (
           <div className="space-y-8">
@@ -97,7 +117,7 @@ const Index = () => {
                   <ServiceCard
                     key={service.id}
                     service={service}
-                    onClick={() => console.log(`Selected ${service.title}`)}
+                    onClick={() => handleServiceClick(service.id)}
                   />
                 ))}
               </div>
@@ -111,7 +131,7 @@ const Index = () => {
                   <ServiceCard
                     key={service.id}
                     service={service}
-                    onClick={() => console.log(`Selected ${service.title}`)}
+                    onClick={() => handleServiceClick(service.id)}
                   />
                 ))}
               </div>

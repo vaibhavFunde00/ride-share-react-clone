@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { MapPin, Plus, ChevronDown, Clock, User, Calendar, X } from "lucide-react";
+import { MapPin, Plus, ChevronDown, Clock, User, Calendar, X, Car, Plane, Shield, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,7 +17,11 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
-export const HomePage = () => {
+interface HomePageProps {
+  onServiceClick?: (serviceId: string) => void;
+}
+
+export const HomePage = ({ onServiceClick }: HomePageProps) => {
   const [pickupOption, setPickupOption] = useState("Pickup now");
   const [forMeOption, setForMeOption] = useState("For me");
   const [pickupLocation, setPickupLocation] = useState("");
@@ -42,42 +45,123 @@ export const HomePage = () => {
   };
 
   const services = [
-    { name: "Intercity", color: "bg-blue-100", description: "Long distance travel" },
-    { name: "Reserve", color: "bg-green-100", description: "Book in advance" },
-    { name: "Rental", color: "bg-purple-100", description: "Hourly rentals" },
-    { name: "Premium", color: "bg-orange-100", description: "Luxury rides" },
-    { name: "Share", color: "bg-pink-100", description: "Shared rides" },
-    { name: "Auto", color: "bg-yellow-100", description: "Quick rides" },
+    { 
+      id: "intercity",
+      name: "Intercity", 
+      color: "bg-blue-100", 
+      description: "Comfortable long distance travel",
+      image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=300&h=200&fit=crop",
+      icon: Car,
+      rating: 4.8,
+      price: "From $25"
+    },
+    { 
+      id: "reserve",
+      name: "Reserve", 
+      color: "bg-green-100", 
+      description: "Book your ride in advance",
+      image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=300&h=200&fit=crop",
+      icon: Clock,
+      rating: 4.9,
+      price: "From $15"
+    },
+    { 
+      id: "rental",
+      name: "Rental", 
+      color: "bg-purple-100", 
+      description: "Hourly car rentals for your convenience",
+      image: "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=300&h=200&fit=crop",
+      icon: Car,
+      rating: 4.7,
+      price: "From $8/hr"
+    },
+    { 
+      id: "premium",
+      name: "Premium", 
+      color: "bg-orange-100", 
+      description: "Luxury rides with premium comfort",
+      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop",
+      icon: Star,
+      rating: 4.9,
+      price: "From $35"
+    },
+    { 
+      id: "share",
+      name: "Share", 
+      color: "bg-pink-100", 
+      description: "Affordable shared rides",
+      image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=300&h=200&fit=crop",
+      icon: User,
+      rating: 4.6,
+      price: "From $8"
+    },
+    { 
+      id: "auto",
+      name: "Auto", 
+      color: "bg-yellow-100", 
+      description: "Quick and budget-friendly rides",
+      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=200&fit=crop",
+      icon: Car,
+      rating: 4.5,
+      price: "From $5"
+    },
   ];
 
   const rideOptions = [
     {
+      id: "intercity-book",
       title: "Book Intercity →",
-      description: "Effortless outstation trips",
-      gradient: "bg-gradient-to-r from-cyan-400 to-cyan-500"
+      description: "Effortless outstation trips with comfort",
+      gradient: "bg-gradient-to-r from-cyan-400 to-cyan-500",
+      image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop",
+      features: ["AC Vehicles", "Professional Drivers", "24/7 Support"]
     },
     {
+      id: "premium-book",
       title: "Book Premium →",
-      description: "Luxury ride experience",
-      gradient: "bg-gradient-to-r from-red-400 to-red-500"
+      description: "Luxury ride experience with style",
+      gradient: "bg-gradient-to-r from-red-400 to-red-500",
+      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop",
+      features: ["Luxury Cars", "Premium Service", "VIP Treatment"]
     },
     {
+      id: "rental-book",
       title: "Book Rental →",
-      description: "Hourly car rentals",
-      gradient: "bg-gradient-to-r from-green-400 to-green-500"
+      description: "Hourly car rentals for flexibility",
+      gradient: "bg-gradient-to-r from-green-400 to-green-500",
+      image: "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=400&h=200&fit=crop",
+      features: ["Flexible Hours", "Self Drive", "Multiple Locations"]
     },
     {
+      id: "auto-book",
       title: "Book Auto →",
-      description: "Quick and affordable",
-      gradient: "bg-gradient-to-r from-yellow-400 to-yellow-500"
+      description: "Quick and affordable city rides",
+      gradient: "bg-gradient-to-r from-yellow-400 to-yellow-500",
+      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h-200&fit=crop",
+      features: ["Quick Booking", "Budget Friendly", "City Coverage"]
     }
   ];
 
+  const handleServiceClick = (serviceId: string) => {
+    if (onServiceClick) {
+      onServiceClick(serviceId);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 p-4 space-y-6">
-      {/* Brand Name */}
-      <div className="text-center pt-8">
-        <h1 className="text-4xl font-bold text-gray-900">XYZ</h1>
+      {/* Hero Section with Background Image */}
+      <div className="relative text-center pt-8 pb-6 rounded-2xl overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=400&fit=crop')"
+          }}
+        ></div>
+        <div className="relative z-10">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">XYZ Rides</h1>
+          <p className="text-lg text-gray-600">Your journey, our priority</p>
+        </div>
       </div>
 
       {/* Pickup Options */}
@@ -223,16 +307,34 @@ export const HomePage = () => {
 
       {/* Services Section */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Services</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <h2 className="text-xl font-semibold text-gray-900">Our Services</h2>
+        <div className="grid grid-cols-2 gap-4">
           {services.map((service, index) => (
             <div
               key={index}
-              className={`${service.color} rounded-lg p-3 cursor-pointer hover:scale-105 transition-transform`}
+              onClick={() => handleServiceClick(service.id)}
+              className="bg-white rounded-xl p-4 cursor-pointer hover:scale-105 transition-all duration-200 shadow-sm hover:shadow-md"
             >
-              <div className="text-center">
-                <span className="text-sm font-medium text-gray-700">{service.name}</span>
-                <p className="text-xs text-gray-600 mt-1">{service.description}</p>
+              <div className="relative mb-3">
+                <img
+                  src={service.image}
+                  alt={service.name}
+                  className="w-full h-20 object-cover rounded-lg"
+                />
+                <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-1">
+                  <service.icon className="w-4 h-4 text-gray-600" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-900">{service.name}</h3>
+                  <div className="flex items-center space-x-1">
+                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                    <span className="text-xs text-gray-600">{service.rating}</span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500">{service.description}</p>
+                <p className="text-sm font-medium text-green-600">{service.price}</p>
               </div>
             </div>
           ))}
@@ -242,14 +344,34 @@ export const HomePage = () => {
       {/* Choose Your Own Ride Section */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">Choose your own ride</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-4">
           {rideOptions.map((option, index) => (
             <div
               key={index}
-              className={`${option.gradient} rounded-lg p-4 text-white cursor-pointer hover:scale-105 transition-transform`}
+              onClick={() => handleServiceClick(option.id)}
+              className="relative rounded-xl overflow-hidden cursor-pointer hover:scale-[1.02] transition-all duration-200 shadow-sm hover:shadow-md"
             >
-              <h3 className="font-semibold">{option.title}</h3>
-              <p className="text-sm opacity-90">{option.description}</p>
+              <div className="relative h-32">
+                <img
+                  src={option.image}
+                  alt={option.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className={`absolute inset-0 ${option.gradient} opacity-80`}></div>
+                <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
+                  <div>
+                    <h3 className="font-bold text-lg">{option.title}</h3>
+                    <p className="text-sm opacity-90">{option.description}</p>
+                  </div>
+                  <div className="flex space-x-4">
+                    {option.features.map((feature, idx) => (
+                      <span key={idx} className="text-xs bg-white/20 px-2 py-1 rounded-full">
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
