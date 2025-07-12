@@ -4,10 +4,11 @@ import { Header } from "@/components/Header";
 import { ServiceCard } from "@/components/ServiceCard";
 import { BookingForm } from "@/components/BookingForm";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { HomePage } from "@/components/HomePage";
 import { Car, MapPin, Clock, Users, Calendar, CreditCard } from "lucide-react";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("services");
+  const [activeTab, setActiveTab] = useState("home");
 
   const services = [
     {
@@ -67,6 +68,8 @@ const Index = () => {
       <Header />
       
       <main className="pb-20 px-4 pt-6">
+        {activeTab === "home" && <HomePage />}
+
         {activeTab === "services" && (
           <div className="space-y-8">
             {/* Hero Section */}
