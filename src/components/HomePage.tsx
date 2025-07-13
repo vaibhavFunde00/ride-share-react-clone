@@ -30,6 +30,7 @@ export const HomePage = ({ onServiceClick }: HomePageProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
+  const [selectedService, setSelectedService] = useState<string | null>(null);
 
   const addIntermediateDestination = () => {
     setIntermediateDestinations([...intermediateDestinations, ""]);
@@ -144,6 +145,7 @@ export const HomePage = ({ onServiceClick }: HomePageProps) => {
   ];
 
   const handleServiceClick = (serviceId: string) => {
+    setSelectedService(serviceId);
     if (onServiceClick) {
       onServiceClick(serviceId);
     }
@@ -254,73 +256,92 @@ export const HomePage = ({ onServiceClick }: HomePageProps) => {
         </div>
       )}
 
-      {/* Location Inputs */}
-      <div className="space-y-3">
-        <div className="relative flex items-center">
-          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 z-10" />
-          <input
-            type="text"
-            placeholder="Enter pickup location"
-            value={pickupLocation}
-            onChange={(e) => setPickupLocation(e.target.value)}
-            className="w-full pl-10 pr-12 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={addIntermediateDestination}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 w-8 h-8"
-          >
-            <Plus className="w-4 h-4 text-gray-600" />
-          </Button>
-        </div>
-
-        {/* Intermediate Destinations */}
-        {intermediateDestinations.map((destination, index) => (
-          <div key={index} className="relative flex items-center">
-            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 z-10" />
-            <input
-              type="text"
-              placeholder="Enter intermediate destination"
-              value={destination}
-              onChange={(e) => updateIntermediateDestination(index, e.target.value)}
-              className="w-full pl-10 pr-12 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+      {/* Location Inputs - Only show after service selection */}
+      {selectedService && (
+        <div className="space-y-4 bg-white p-6 rounded-xl shadow-lg border-2 border-blue-100">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Enter your trip details for {services.find(s => s.id === selectedService)?.name}
+            </h3>
             <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={() => removeIntermediateDestination(index)}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white border-2 border-red-300 hover:border-red-500 hover:bg-red-50 w-8 h-8"
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setSelectedService(null)}
+              className="text-gray-500 hover:text-gray-700"
             >
-              <X className="w-4 h-4 text-red-600" />
+              <X className="w-4 h-4" />
             </Button>
           </div>
-        ))}
+          
+          <div className="space-y-4">
+            {/* Pickup Location */}
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
+                <div className="w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-md"></div>
+              </div>
+              <input
+                type="text"
+                placeholder="Pickup location"
+                value={pickupLocation}
+                onChange={(e) => setPickupLocation(e.target.value)}
+                className="w-full pl-10 pr-12 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={addIntermediateDestination}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 hover:bg-blue-50 w-10 h-10 rounded-full"
+              >
+                <Plus className="w-5 h-5 text-blue-600" />
+              </Button>
+            </div>
 
-        <div className="relative flex items-center">
-          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 z-10" />
-          <input
-            type="text"
-            placeholder="Enter destination"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            className="w-full pl-10 pr-12 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={addIntermediateDestination}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 w-8 h-8"
-          >
-            <Plus className="w-4 h-4 text-gray-600" />
+            {/* Intermediate Destinations */}
+            {intermediateDestinations.map((destination, index) => (
+              <div key={index} className="relative">
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full border-2 border-white shadow-md"></div>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Stop location"
+                  value={destination}
+                  onChange={(e) => updateIntermediateDestination(index, e.target.value)}
+                  className="w-full pl-10 pr-12 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
+                />
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => removeIntermediateDestination(index)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 hover:bg-red-50 w-10 h-10 rounded-full"
+                >
+                  <X className="w-5 h-5 text-red-600" />
+                </Button>
+              </div>
+            ))}
+
+            {/* Destination */}
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
+                <div className="w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-md"></div>
+              </div>
+              <input
+                type="text"
+                placeholder="Destination"
+                value={destination}
+                onChange={(e) => setDestination(e.target.value)}
+                className="w-full pl-10 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
+              />
+            </div>
+          </div>
+
+          {/* Search Button */}
+          <Button className="w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200">
+            <MapPin className="w-5 h-5 mr-2" />
+            Find Rides
           </Button>
         </div>
-      </div>
-
-      {/* Search Button */}
-      <Button className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg">
-        Search Rides
-      </Button>
+      )}
 
       {/* Services Section */}
       <div className="space-y-4">
