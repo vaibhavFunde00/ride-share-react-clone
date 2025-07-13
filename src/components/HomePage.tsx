@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Plus, ChevronDown, Clock, User, Calendar, X, Car, Plane, Shield, Star } from "lucide-react";
+import { MapPin, Plus, ChevronDown, Clock, User, Calendar, X, Car, Plane, Shield, Star, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,6 +29,7 @@ export const HomePage = ({ onServiceClick }: HomePageProps) => {
   const [intermediateDestinations, setIntermediateDestinations] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
 
   const addIntermediateDestination = () => {
     setIntermediateDestinations([...intermediateDestinations, ""]);
@@ -203,6 +204,56 @@ export const HomePage = ({ onServiceClick }: HomePageProps) => {
         </DropdownMenu>
       </div>
 
+      {/* Date and Time Selection for Pick Later */}
+      {pickupOption === "Pickup later" && (
+        <div className="flex space-x-3">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "flex-1 justify-start text-left font-normal bg-white",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 bg-white shadow-lg border rounded-lg z-50" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                initialFocus
+                className="p-3 pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
+
+          <Input
+            type="time"
+            value={selectedTime}
+            onChange={(e) => setSelectedTime(e.target.value)}
+            className="flex-1 bg-white"
+          />
+        </div>
+      )}
+
+      {/* Mobile Number for Someone Else */}
+      {forMeOption === "For someone else" && (
+        <div className="relative flex items-center">
+          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 z-10" />
+          <input
+            type="tel"
+            placeholder="Enter mobile number"
+            value={mobileNumber}
+            onChange={(e) => setMobileNumber(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+      )}
+
       {/* Location Inputs */}
       <div className="space-y-3">
         <div className="relative flex items-center">
@@ -266,40 +317,6 @@ export const HomePage = ({ onServiceClick }: HomePageProps) => {
         </div>
       </div>
 
-      {/* Date and Time Selection */}
-      <div className="flex space-x-3">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "flex-1 justify-start text-left font-normal bg-white",
-                !selectedDate && "text-muted-foreground"
-              )}
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 bg-white shadow-lg border rounded-lg z-50" align="start">
-            <CalendarComponent
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              initialFocus
-              className="p-3 pointer-events-auto"
-            />
-          </PopoverContent>
-        </Popover>
-
-        <Input
-          type="time"
-          value={selectedTime}
-          onChange={(e) => setSelectedTime(e.target.value)}
-          className="flex-1 bg-white"
-        />
-      </div>
-
       {/* Search Button */}
       <Button className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg">
         Search Rides
@@ -341,41 +358,6 @@ export const HomePage = ({ onServiceClick }: HomePageProps) => {
         </div>
       </div>
 
-      {/* Choose Your Own Ride Section */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Choose your own ride</h2>
-        <div className="space-y-4">
-          {rideOptions.map((option, index) => (
-            <div
-              key={index}
-              onClick={() => handleServiceClick(option.id)}
-              className="relative rounded-xl overflow-hidden cursor-pointer hover:scale-[1.02] transition-all duration-200 shadow-sm hover:shadow-md"
-            >
-              <div className="relative h-32">
-                <img
-                  src={option.image}
-                  alt={option.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className={`absolute inset-0 ${option.gradient} opacity-80`}></div>
-                <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
-                  <div>
-                    <h3 className="font-bold text-lg">{option.title}</h3>
-                    <p className="text-sm opacity-90">{option.description}</p>
-                  </div>
-                  <div className="flex space-x-4">
-                    {option.features.map((feature, idx) => (
-                      <span key={idx} className="text-xs bg-white/20 px-2 py-1 rounded-full">
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
